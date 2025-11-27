@@ -2,6 +2,8 @@
 
 A minimal, elegant single-page web application for practicing multiple-choice questions. Built with vanilla HTML, CSS (Tailwind), and JavaScript. Runs entirely in the browser with no backend required.
 
+![demo.gif](demo.gif)
+
 ## Features
 
 -   **Client-Side Only**: No server, no installation. Just open `index.html`.
@@ -12,6 +14,7 @@ A minimal, elegant single-page web application for practicing multiple-choice qu
     -   **Multiple Choice**: "Progressive reveal" for correct answers; immediate failure for incorrect ones.
 -   **Live Scoring**: Tracks total, correct, incorrect, and percentage.
 -   **Review & Export**: View a detailed summary of incorrect answers and export results to JSON.
+-   **Gemini AI Generation**: Generate custom MCQs from your own study materials (PDF/TXT/MD) using Google's Gemini Pro models.
 
 ## Setup & Usage
 
@@ -19,6 +22,13 @@ A minimal, elegant single-page web application for practicing multiple-choice qu
 2.  **Upload Questions**: Click "Select Questions File(s)" and choose your `.txt` file containing questions.
 3.  **Upload Answers**: Click "Select Answers File" and choose your `.txt` file containing the answer key.
 4.  **Start Practicing**: Questions will appear automatically.
+
+## Gemini AI Generation
+
+1.  **Enter API Key**: You need a Google Gemini API key. The key is stored only in your browser session and is not saved.
+2.  **Select Source**: Upload a PDF, text file, or markdown file containing your study material.
+3.  **Configure**: Choose the number of questions, difficulty level, and question type (Single/Multiple/Mixed).
+4.  **Generate**: Click "Generate Questions". The app will create questions and answers, then automatically load them for you to practice.
 
 ## Sample Input Formats
 
