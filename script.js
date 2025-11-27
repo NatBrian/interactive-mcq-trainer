@@ -37,10 +37,45 @@ const elements = {
     summaryCorrect: document.getElementById('summary-correct'),
     summaryIncorrect: document.getElementById('summary-incorrect'),
     summaryPercent: document.getElementById('summary-percent'),
-    wrongAnswersList: document.getElementById('wrong-answers-list')
+    wrongAnswersList: document.getElementById('wrong-answers-list'),
+    themeToggle: document.getElementById('theme-toggle'),
+    iconSun: document.getElementById('icon-sun'),
+    iconMoon: document.getElementById('icon-moon')
 };
 
+// --- Theme Logic ---
+function initTheme() {
+    const savedTheme = localStorage.getItem('theme');
+    const systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+    if (savedTheme === 'dark' || (!savedTheme && systemDark)) {
+        document.documentElement.classList.add('dark');
+        updateThemeIcons(true);
+    } else {
+        document.documentElement.classList.remove('dark');
+        updateThemeIcons(false);
+    }
+}
+
+function toggleTheme() {
+    const isDark = document.documentElement.classList.toggle('dark');
+    localStorage.setItem('theme', isDark ? 'dark' : 'light');
+    updateThemeIcons(isDark);
+}
+
+function updateThemeIcons(isDark) {
+    if (isDark) {
+        elements.iconSun.classList.remove('hidden');
+        elements.iconMoon.classList.add('hidden');
+    } else {
+        elements.iconSun.classList.add('hidden');
+        elements.iconMoon.classList.remove('hidden');
+    }
+}
+
 // --- Event Listeners ---
+initTheme();
+elements.themeToggle.addEventListener('click', toggleTheme);
 elements.questionsFile.addEventListener('change', handleQuestionsUpload);
 elements.answersFile.addEventListener('change', handleAnswersUpload);
 elements.resetBtn.addEventListener('click', resetApp);
@@ -92,7 +127,7 @@ async function handleAnswersUpload(e) {
     try {
         const text = await readFile(file);
         const parsedAnswers = parseAnswersText(text);
-        
+
         if (parsedAnswers.size === 0) {
             throw new Error("No valid answers found. Please check the file format.");
         }
@@ -142,7 +177,7 @@ function parseQuestionsText(text) {
                 choices: [],
                 rawLine: i + 1
             };
-            
+
             // If text was empty on first line, it might be on next lines (handled by default else)
             continue;
         }
@@ -158,9 +193,6 @@ function parseQuestionsText(text) {
         }
 
         // Append to current question text if it's not a choice and we have a question open
-        // But be careful not to merge unrelated text. 
-        // Heuristic: if it looks like a choice but failed regex, maybe warn? 
-        // For now, assume multiline text belongs to Q or last Choice.
         if (currentQ) {
             if (currentQ.choices.length > 0) {
                 // Multiline choice
@@ -182,7 +214,6 @@ function parseAnswersText(text) {
     let currentA = null;
 
     // Regex helpers
-    // Matches "1. Correct: A" or "71. Correct: A, B, D"
     const aStartRegex = /^(\d+)[\.:\s]*Correct:\s*([A-Z](?:\s*,\s*[A-Z])*)/i;
     const expStartRegex = /^\s*Explanation:\s*(.*)/i;
 
@@ -224,8 +255,6 @@ function parseAnswersText(text) {
 function checkReadyToRender() {
     if (state.questions.length > 0 && state.answersMap.size > 0) {
         processAndRender();
-        // Collapse upload section for better UX
-        // elements.uploadSection.classList.add('hidden'); // Optional: keep visible or minimize
     }
 }
 
@@ -237,19 +266,6 @@ function processAndRender() {
     state.questions.forEach((q, index) => {
         // 1. Match with Answer
         let answer = state.answersMap.get(q.id);
-        
-        // Fallback: Positional matching if IDs don't align (simple heuristic)
-        // Or fuzzy text match (omitted for simplicity/robustness trade-off, sticking to ID or Index)
-        if (!answer) {
-            // Try to find by index if map keys are mostly numeric and sequential? 
-            // Let's stick to ID match first. If strictly required, we can add more complex logic.
-            // Requirement says: "Exact numeric ID match... Normalized question text match... positional mapping"
-            
-            // Try positional if ID lookup failed
-            // Convert map to array to access by index?
-            // const answersArray = Array.from(state.answersMap.values());
-            // if (index < answersArray.length) answer = answersArray[index];
-        }
 
         if (!answer) {
             console.warn(`No answer found for Q${q.id}`);
@@ -263,7 +279,6 @@ function processAndRender() {
         }
 
         // 2. Determine Type
-        // Explicit metadata > Answer count
         if (q.explicitType) {
             q.type = q.explicitType; // SINGLE or MULTIPLE
         } else {
@@ -284,10 +299,10 @@ function renderQuestion(q, index) {
     const template = document.getElementById('question-template');
     const clone = template.content.cloneNode(true);
     const card = clone.querySelector('.question-card');
-    
+
     // Set IDs for easy access
     card.id = `q-card-${q.id}`;
-    
+
     // Header
     clone.querySelector('.question-id-badge').textContent = `Q${q.id}`;
     clone.querySelector('.question-type-badge').textContent = q.type === 'SINGLE' ? 'Single Choice' : 'Multiple Choice';
@@ -299,15 +314,15 @@ function renderQuestion(q, index) {
         const label = document.createElement('label');
         label.className = 'choice-label group';
         label.dataset.key = choice.key;
-        
+
         const inputType = q.type === 'SINGLE' ? 'radio' : 'checkbox';
         const inputName = `q-${q.id}`; // Group radios by question
-        
+
         label.innerHTML = `
             <input type="${inputType}" name="${inputName}" value="${choice.key}" class="choice-input">
             <span class="flex-1">
-                <span class="font-bold text-slate-700 mr-2">${choice.key}.</span>
-                <span class="text-slate-600">${choice.text}</span>
+                <span class="font-bold text-slate-700 dark:text-slate-300 mr-2">${choice.key}.</span>
+                <span class="text-slate-600 dark:text-slate-400">${choice.text}</span>
             </span>
         `;
 
@@ -339,7 +354,7 @@ function handleInteraction(q, selectedKey, inputElement, cardElement) {
     if (q.type === 'SINGLE') {
         // Single Choice Logic
         const isCorrect = q.correctKeys.includes(selectedKey);
-        
+
         // Lock inputs
         allInputs.forEach(inp => inp.disabled = true);
         allLabels.forEach(lbl => lbl.classList.add('disabled'));
@@ -370,7 +385,7 @@ function handleInteraction(q, selectedKey, inputElement, cardElement) {
         // Get all currently checked inputs
         const checkedInputs = Array.from(allInputs).filter(i => i.checked);
         const checkedKeys = checkedInputs.map(i => i.value);
-        
+
         // Check if the LATEST click was incorrect
         const isLatestCorrect = q.correctKeys.includes(selectedKey);
 
@@ -382,7 +397,7 @@ function handleInteraction(q, selectedKey, inputElement, cardElement) {
 
             // Mark clicked as incorrect
             markChoice(cardElement, selectedKey, 'incorrect');
-            
+
             // Reveal all correct answers (missed ones)
             q.correctKeys.forEach(key => {
                 if (!checkedKeys.includes(key)) {
@@ -421,10 +436,6 @@ function handleInteraction(q, selectedKey, inputElement, cardElement) {
             expContainer.classList.remove('hidden');
             q.userSelectedKeys = checkedKeys;
             updateScoreboard();
-        } else {
-            // Progressive state: User found a correct one, but not all yet.
-            // Do nothing visual yet (per requirements), just wait.
-            // "If the user only clicks choices that are within correctKeys... do not reveal green highlights until the user has selected all correct choices."
         }
     }
 }
@@ -442,9 +453,9 @@ function markChoice(card, key, type) {
 }
 
 function showStatusIcon(container, status) {
-    container.innerHTML = status === 'correct' 
-        ? '<svg class="text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>'
-        : '<svg class="text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>';
+    container.innerHTML = status === 'correct'
+        ? '<svg class="text-green-500 dark:text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>'
+        : '<svg class="text-red-500 dark:text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>';
     container.classList.remove('opacity-0');
 }
 
@@ -452,7 +463,7 @@ function updateScoreboard() {
     elements.scoreTotal.textContent = state.stats.total;
     elements.scoreCorrect.textContent = state.stats.correct;
     elements.scoreIncorrect.textContent = state.stats.incorrect;
-    
+
     const answered = state.stats.correct + state.stats.incorrect;
     const percent = answered > 0 ? Math.round((state.stats.correct / answered) * 100) : 0;
     elements.scorePercent.textContent = `${percent}%`;
@@ -468,14 +479,13 @@ function resetApp() {
     state.questions = [];
     state.answersMap = new Map();
     state.stats = { total: 0, correct: 0, incorrect: 0 };
-    
+
     elements.questionsContainer.innerHTML = '';
     elements.questionsFile.value = '';
     elements.answersFile.value = '';
     elements.questionsStatus.textContent = '';
     elements.answersStatus.textContent = '';
     elements.parseError.classList.add('hidden');
-    // elements.uploadSection.classList.remove('hidden');
     updateScoreboard();
 }
 
@@ -498,25 +508,25 @@ function showResults() {
     // Populate Wrong Answers
     elements.wrongAnswersList.innerHTML = '';
     const wrongQs = state.questions.filter(q => q.status === 'incorrect');
-    
+
     if (wrongQs.length === 0) {
-        elements.wrongAnswersList.innerHTML = '<p class="text-slate-500 italic text-center py-8">No incorrect answers to review. Great job!</p>';
+        elements.wrongAnswersList.innerHTML = '<p class="text-slate-500 dark:text-slate-400 italic text-center py-8">No incorrect answers to review. Great job!</p>';
     } else {
         wrongQs.forEach(q => {
             const div = document.createElement('div');
-            div.className = 'bg-red-50 p-4 rounded-lg border border-red-100';
+            div.className = 'bg-red-50 dark:bg-red-900/20 p-4 rounded-lg border border-red-100 dark:border-red-800';
             div.innerHTML = `
                 <div class="flex justify-between mb-2">
-                    <span class="font-bold text-red-800">Q${q.id}</span>
-                    <span class="text-xs text-red-600 uppercase font-semibold">Incorrect</span>
+                    <span class="font-bold text-red-800 dark:text-red-300">Q${q.id}</span>
+                    <span class="text-xs text-red-600 dark:text-red-400 uppercase font-semibold">Incorrect</span>
                 </div>
-                <p class="text-slate-800 mb-3">${q.text}</p>
+                <p class="text-slate-800 dark:text-slate-200 mb-3">${q.text}</p>
                 <div class="text-sm space-y-1 mb-3">
-                    <div class="flex gap-2"><span class="font-semibold text-red-700 w-24">You Selected:</span> <span>${(q.userSelectedKeys || []).join(', ')}</span></div>
-                    <div class="flex gap-2"><span class="font-semibold text-green-700 w-24">Correct:</span> <span>${q.correctKeys.join(', ')}</span></div>
+                    <div class="flex gap-2"><span class="font-semibold text-red-700 dark:text-red-400 w-24">You Selected:</span> <span class="dark:text-slate-300">${(q.userSelectedKeys || []).join(', ')}</span></div>
+                    <div class="flex gap-2"><span class="font-semibold text-green-700 dark:text-green-400 w-24">Correct:</span> <span class="dark:text-slate-300">${q.correctKeys.join(', ')}</span></div>
                 </div>
-                <div class="text-sm text-slate-600 bg-white p-3 rounded border border-red-100">
-                    <span class="font-semibold text-slate-700">Explanation:</span> ${q.explanation}
+                <div class="text-sm text-slate-600 dark:text-slate-300 bg-white dark:bg-slate-800 p-3 rounded border border-red-100 dark:border-red-900/50">
+                    <span class="font-semibold text-slate-700 dark:text-slate-200">Explanation:</span> ${q.explanation}
                 </div>
             `;
             elements.wrongAnswersList.appendChild(div);
@@ -550,7 +560,7 @@ function exportResults() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `mcq-results-${new Date().toISOString().slice(0,10)}.json`;
+    a.download = `mcq-results-${new Date().toISOString().slice(0, 10)}.json`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);

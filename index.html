@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="transition-colors duration-300">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,6 +11,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script>
         tailwind.config = {
+            darkMode: 'class',
             theme: {
                 extend: {
                     fontFamily: {
@@ -29,40 +31,65 @@
         }
     </script>
 </head>
-<body class="bg-slate-50 text-slate-800 font-sans min-h-screen flex flex-col">
+
+<body
+    class="bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-200 font-sans min-h-screen flex flex-col transition-colors duration-300">
 
     <!-- Header & Scoreboard -->
-    <header class="bg-white shadow-sm sticky top-0 z-10 border-b border-slate-200">
+    <header
+        class="bg-white dark:bg-slate-800 shadow-sm sticky top-0 z-10 border-b border-slate-200 dark:border-slate-700 transition-colors duration-300">
         <div class="max-w-5xl mx-auto px-4 py-4 flex flex-col md:flex-row justify-between items-center gap-4">
-            <h1 class="text-2xl font-bold text-brand-700 tracking-tight">MCQ Trainer</h1>
-            
-            <div class="flex items-center gap-6 text-sm font-medium bg-slate-100 px-4 py-2 rounded-lg shadow-inner">
+            <div class="flex items-center gap-4">
+                <h1 class="text-2xl font-bold text-brand-700 dark:text-brand-500 tracking-tight">MCQ Trainer</h1>
+                <button id="theme-toggle"
+                    class="p-2 rounded-lg text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
+                    title="Toggle Dark Mode">
+                    <!-- Sun Icon -->
+                    <svg id="icon-sun" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 hidden" fill="none"
+                        viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+                    </svg>
+                    <!-- Moon Icon -->
+                    <svg id="icon-moon" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
+                        viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+                    </svg>
+                </button>
+            </div>
+
+            <div
+                class="flex items-center gap-6 text-sm font-medium bg-slate-100 dark:bg-slate-700 px-4 py-2 rounded-lg shadow-inner transition-colors duration-300">
                 <div class="flex flex-col items-center">
-                    <span class="text-slate-500 text-xs uppercase">Total</span>
-                    <span id="score-total" class="text-lg leading-none">0</span>
+                    <span class="text-slate-500 dark:text-slate-400 text-xs uppercase">Total</span>
+                    <span id="score-total" class="text-lg leading-none dark:text-slate-200">0</span>
                 </div>
-                <div class="w-px h-8 bg-slate-300"></div>
-                <div class="flex flex-col items-center text-green-600">
+                <div class="w-px h-8 bg-slate-300 dark:bg-slate-600"></div>
+                <div class="flex flex-col items-center text-green-600 dark:text-green-400">
                     <span class="text-xs uppercase">Correct</span>
                     <span id="score-correct" class="text-lg leading-none">0</span>
                 </div>
-                <div class="w-px h-8 bg-slate-300"></div>
-                <div class="flex flex-col items-center text-red-600">
+                <div class="w-px h-8 bg-slate-300 dark:bg-slate-600"></div>
+                <div class="flex flex-col items-center text-red-600 dark:text-red-400">
                     <span class="text-xs uppercase">Incorrect</span>
                     <span id="score-incorrect" class="text-lg leading-none">0</span>
                 </div>
-                <div class="w-px h-8 bg-slate-300"></div>
-                <div class="flex flex-col items-center text-brand-600">
+                <div class="w-px h-8 bg-slate-300 dark:bg-slate-600"></div>
+                <div class="flex flex-col items-center text-brand-600 dark:text-brand-400">
                     <span class="text-xs uppercase">Score</span>
                     <span id="score-percent" class="text-lg leading-none">0%</span>
                 </div>
             </div>
 
             <div class="flex gap-2">
-                 <button id="reset-btn" class="text-slate-500 hover:text-red-600 font-medium text-sm px-3 py-2 rounded transition-colors" title="Reset All">
+                <button id="reset-btn"
+                    class="text-slate-500 dark:text-slate-400 hover:text-red-600 dark:hover:text-red-400 font-medium text-sm px-3 py-2 rounded transition-colors"
+                    title="Reset All">
                     Reset
                 </button>
-                <button id="finish-btn" class="bg-brand-600 hover:bg-brand-700 text-white font-medium text-sm px-4 py-2 rounded shadow-sm transition-all transform active:scale-95">
+                <button id="finish-btn"
+                    class="bg-brand-600 hover:bg-brand-700 text-white font-medium text-sm px-4 py-2 rounded shadow-sm transition-all transform active:scale-95">
                     Finish & Review
                 </button>
             </div>
@@ -71,45 +98,59 @@
 
     <!-- Main Content -->
     <main class="flex-grow container max-w-3xl mx-auto px-4 py-8">
-        
+
         <!-- Upload Section -->
-        <section id="upload-section" class="bg-white rounded-xl shadow-sm border border-slate-200 p-8 mb-8 text-center transition-all duration-300">
+        <section id="upload-section"
+            class="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-8 mb-8 text-center transition-all duration-300">
             <div class="mb-6">
-                <h2 class="text-xl font-semibold text-slate-800 mb-2">Upload Quiz Files</h2>
-                <p class="text-slate-500 text-sm">Select your Questions and Answers text files to begin.</p>
+                <h2 class="text-xl font-semibold text-slate-800 dark:text-slate-100 mb-2">Upload Quiz Files</h2>
+                <p class="text-slate-500 dark:text-slate-400 text-sm">Select your Questions and Answers text files to
+                    begin.</p>
             </div>
-            
+
             <div class="grid md:grid-cols-2 gap-6 max-w-2xl mx-auto">
                 <!-- Questions Input -->
                 <div class="relative group">
-                    <label for="questions-file" class="block w-full cursor-pointer bg-slate-50 border-2 border-dashed border-slate-300 rounded-lg p-6 hover:border-brand-500 hover:bg-brand-50 transition-all text-center">
+                    <label for="questions-file"
+                        class="block w-full cursor-pointer bg-slate-50 dark:bg-slate-700 border-2 border-dashed border-slate-300 dark:border-slate-600 rounded-lg p-6 hover:border-brand-500 dark:hover:border-brand-500 hover:bg-brand-50 dark:hover:bg-slate-600 transition-all text-center">
                         <div class="mb-2 text-slate-400 group-hover:text-brand-500">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 mx-auto" fill="none"
+                                viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                             </svg>
                         </div>
-                        <span class="text-sm font-medium text-slate-600 group-hover:text-brand-600">Select Questions File(s)</span>
+                        <span
+                            class="text-sm font-medium text-slate-600 dark:text-slate-300 group-hover:text-brand-600 dark:group-hover:text-brand-400">Select
+                            Questions File(s)</span>
                         <input type="file" id="questions-file" multiple accept=".txt" class="hidden">
                     </label>
-                    <div id="questions-status" class="mt-2 text-xs text-slate-500 h-4"></div>
+                    <div id="questions-status" class="mt-2 text-xs text-slate-500 dark:text-slate-400 h-4"></div>
                 </div>
 
                 <!-- Answers Input -->
                 <div class="relative group">
-                    <label for="answers-file" class="block w-full cursor-pointer bg-slate-50 border-2 border-dashed border-slate-300 rounded-lg p-6 hover:border-brand-500 hover:bg-brand-50 transition-all text-center">
+                    <label for="answers-file"
+                        class="block w-full cursor-pointer bg-slate-50 dark:bg-slate-700 border-2 border-dashed border-slate-300 dark:border-slate-600 rounded-lg p-6 hover:border-brand-500 dark:hover:border-brand-500 hover:bg-brand-50 dark:hover:bg-slate-600 transition-all text-center">
                         <div class="mb-2 text-slate-400 group-hover:text-brand-500">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 mx-auto" fill="none"
+                                viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
                             </svg>
                         </div>
-                        <span class="text-sm font-medium text-slate-600 group-hover:text-brand-600">Select Answers File</span>
+                        <span
+                            class="text-sm font-medium text-slate-600 dark:text-slate-300 group-hover:text-brand-600 dark:group-hover:text-brand-400">Select
+                            Answers File</span>
                         <input type="file" id="answers-file" accept=".txt" class="hidden">
                     </label>
-                    <div id="answers-status" class="mt-2 text-xs text-slate-500 h-4"></div>
+                    <div id="answers-status" class="mt-2 text-xs text-slate-500 dark:text-slate-400 h-4"></div>
                 </div>
             </div>
 
-            <div id="parse-error" class="hidden mt-6 p-4 bg-red-50 text-red-700 rounded-lg text-sm text-left border border-red-200"></div>
+            <div id="parse-error"
+                class="hidden mt-6 p-4 bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-400 rounded-lg text-sm text-left border border-red-200 dark:border-red-800">
+            </div>
         </section>
 
         <!-- Questions List -->
@@ -120,49 +161,58 @@
     </main>
 
     <!-- Results Modal -->
-    <div id="results-modal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4 opacity-0 transition-opacity duration-300">
-        <div class="bg-white rounded-xl shadow-2xl w-full max-w-4xl max-h-[90vh] flex flex-col transform scale-95 transition-transform duration-300" id="results-content">
-            <div class="p-6 border-b border-slate-100 flex justify-between items-center">
-                <h2 class="text-2xl font-bold text-slate-800">Session Summary</h2>
-                <button id="close-results" class="text-slate-400 hover:text-slate-600 transition-colors">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+    <div id="results-modal"
+        class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4 opacity-0 transition-opacity duration-300">
+        <div class="bg-white dark:bg-slate-800 rounded-xl shadow-2xl w-full max-w-4xl max-h-[90vh] flex flex-col transform scale-95 transition-transform duration-300 border border-slate-200 dark:border-slate-700"
+            id="results-content">
+            <div class="p-6 border-b border-slate-100 dark:border-slate-700 flex justify-between items-center">
+                <h2 class="text-2xl font-bold text-slate-800 dark:text-slate-100">Session Summary</h2>
+                <button id="close-results"
+                    class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M6 18L18 6M6 6l12 12" />
                     </svg>
                 </button>
             </div>
-            
+
             <div class="p-6 overflow-y-auto custom-scrollbar">
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-                    <div class="bg-slate-50 p-4 rounded-lg text-center">
-                        <div class="text-sm text-slate-500 uppercase tracking-wide">Total</div>
-                        <div class="text-3xl font-bold text-slate-800" id="summary-total">0</div>
+                    <div class="bg-slate-50 dark:bg-slate-700 p-4 rounded-lg text-center">
+                        <div class="text-sm text-slate-500 dark:text-slate-400 uppercase tracking-wide">Total</div>
+                        <div class="text-3xl font-bold text-slate-800 dark:text-slate-100" id="summary-total">0</div>
                     </div>
-                    <div class="bg-green-50 p-4 rounded-lg text-center">
-                        <div class="text-sm text-green-600 uppercase tracking-wide">Correct</div>
-                        <div class="text-3xl font-bold text-green-700" id="summary-correct">0</div>
+                    <div class="bg-green-50 dark:bg-green-900/20 p-4 rounded-lg text-center">
+                        <div class="text-sm text-green-600 dark:text-green-400 uppercase tracking-wide">Correct</div>
+                        <div class="text-3xl font-bold text-green-700 dark:text-green-400" id="summary-correct">0</div>
                     </div>
-                    <div class="bg-red-50 p-4 rounded-lg text-center">
-                        <div class="text-sm text-red-600 uppercase tracking-wide">Incorrect</div>
-                        <div class="text-3xl font-bold text-red-700" id="summary-incorrect">0</div>
+                    <div class="bg-red-50 dark:bg-red-900/20 p-4 rounded-lg text-center">
+                        <div class="text-sm text-red-600 dark:text-red-400 uppercase tracking-wide">Incorrect</div>
+                        <div class="text-3xl font-bold text-red-700 dark:text-red-400" id="summary-incorrect">0</div>
                     </div>
-                    <div class="bg-brand-50 p-4 rounded-lg text-center">
-                        <div class="text-sm text-brand-600 uppercase tracking-wide">Score</div>
-                        <div class="text-3xl font-bold text-brand-700" id="summary-percent">0%</div>
+                    <div class="bg-brand-50 dark:bg-brand-900/20 p-4 rounded-lg text-center">
+                        <div class="text-sm text-brand-600 dark:text-brand-400 uppercase tracking-wide">Score</div>
+                        <div class="text-3xl font-bold text-brand-700 dark:text-brand-400" id="summary-percent">0%</div>
                     </div>
                 </div>
 
-                <h3 class="text-lg font-semibold text-slate-800 mb-4">Incorrect Answers Review</h3>
+                <h3 class="text-lg font-semibold text-slate-800 dark:text-slate-100 mb-4">Incorrect Answers Review</h3>
                 <div id="wrong-answers-list" class="space-y-4">
                     <!-- Wrong answers injected here -->
-                    <p class="text-slate-500 italic text-center py-8">No incorrect answers to review. Great job!</p>
+                    <p class="text-slate-500 dark:text-slate-400 italic text-center py-8">No incorrect answers to
+                        review. Great job!</p>
                 </div>
             </div>
 
-            <div class="p-6 border-t border-slate-100 bg-slate-50 rounded-b-xl flex justify-end gap-3">
-                <button id="export-btn" class="px-4 py-2 bg-white border border-slate-300 text-slate-700 rounded-lg hover:bg-slate-50 font-medium text-sm transition-colors shadow-sm">
+            <div
+                class="p-6 border-t border-slate-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-700/50 rounded-b-xl flex justify-end gap-3">
+                <button id="export-btn"
+                    class="px-4 py-2 bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-200 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-600 font-medium text-sm transition-colors shadow-sm">
                     Export JSON
                 </button>
-                <button id="close-results-btn" class="px-4 py-2 bg-brand-600 text-white rounded-lg hover:bg-brand-700 font-medium text-sm transition-colors shadow-sm">
+                <button id="close-results-btn"
+                    class="px-4 py-2 bg-brand-600 text-white rounded-lg hover:bg-brand-700 font-medium text-sm transition-colors shadow-sm">
                     Close
                 </button>
             </div>
@@ -171,13 +221,18 @@
 
     <!-- Templates (Hidden) -->
     <template id="question-template">
-        <div class="question-card bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden transition-all duration-300 hover:shadow-md">
+        <div
+            class="question-card bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden transition-all duration-300 hover:shadow-md">
             <div class="p-6">
                 <div class="flex justify-between items-start mb-4 gap-4">
                     <div class="flex-1">
-                        <span class="inline-block px-2 py-1 text-xs font-semibold bg-slate-100 text-slate-500 rounded mb-2 question-id-badge">Q1</span>
-                        <span class="inline-block px-2 py-1 text-xs font-semibold bg-brand-50 text-brand-600 rounded mb-2 ml-2 question-type-badge">Single Choice</span>
-                        <p class="text-lg text-slate-800 font-medium leading-relaxed question-text">Question text goes here...</p>
+                        <span
+                            class="inline-block px-2 py-1 text-xs font-semibold bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400 rounded mb-2 question-id-badge">Q1</span>
+                        <span
+                            class="inline-block px-2 py-1 text-xs font-semibold bg-brand-50 dark:bg-brand-900/30 text-brand-600 dark:text-brand-400 rounded mb-2 ml-2 question-type-badge">Single
+                            Choice</span>
+                        <p class="text-lg text-slate-800 dark:text-slate-100 font-medium leading-relaxed question-text">
+                            Question text goes here...</p>
                     </div>
                     <div class="status-icon w-6 h-6 flex-shrink-0 opacity-0 transition-opacity duration-300">
                         <!-- Icon injected via JS -->
@@ -188,8 +243,9 @@
                     <!-- Choices injected here -->
                 </div>
 
-                <div class="explanation-container hidden mt-4 p-4 bg-slate-50 rounded-lg border-l-4 border-brand-400 text-sm text-slate-700 animate-fade-in">
-                    <strong class="block text-brand-700 mb-1">Explanation:</strong>
+                <div
+                    class="explanation-container hidden mt-4 p-4 bg-slate-50 dark:bg-slate-700/50 rounded-lg border-l-4 border-brand-400 dark:border-brand-500 text-sm text-slate-700 dark:text-slate-300 animate-fade-in">
+                    <strong class="block text-brand-700 dark:text-brand-400 mb-1">Explanation:</strong>
                     <p class="explanation-text leading-relaxed">Explanation text...</p>
                 </div>
             </div>
@@ -198,4 +254,5 @@
 
     <script src="script.js"></script>
 </body>
+
 </html>
