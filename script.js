@@ -196,10 +196,10 @@ function parseQuestionsText(text) {
         if (currentQ) {
             if (currentQ.choices.length > 0) {
                 // Multiline choice
-                currentQ.choices[currentQ.choices.length - 1].text += ' ' + line;
+                currentQ.choices[currentQ.choices.length - 1].text += '\n' + line;
             } else {
                 // Multiline question text
-                currentQ.text += (currentQ.text ? ' ' : '') + line;
+                currentQ.text += (currentQ.text ? '\n' : '') + line;
             }
         }
     }
@@ -242,7 +242,7 @@ function parseAnswersText(text) {
 
         // Append multiline explanation
         if (currentA) {
-            currentA.explanation += (currentA.explanation ? ' ' : '') + line;
+            currentA.explanation += (currentA.explanation ? '\n' : '') + line;
         }
     }
     if (currentA) answers.set(currentA.id, currentA);
@@ -306,7 +306,7 @@ function renderQuestion(q, index) {
     // Header
     clone.querySelector('.question-id-badge').textContent = `Q${q.id}`;
     clone.querySelector('.question-type-badge').textContent = q.type === 'SINGLE' ? 'Single Choice' : 'Multiple Choice';
-    clone.querySelector('.question-text').textContent = q.text;
+    ContentRenderer.render(clone.querySelector('.question-text'), q.text);
 
     // Choices
     const choicesContainer = clone.querySelector('.choices-container');
@@ -322,9 +322,11 @@ function renderQuestion(q, index) {
             <input type="${inputType}" name="${inputName}" value="${choice.key}" class="choice-input">
             <span class="flex-1">
                 <span class="font-bold text-slate-700 dark:text-slate-300 mr-2">${choice.key}.</span>
-                <span class="text-slate-600 dark:text-slate-400">${choice.text}</span>
+                <span class="text-slate-600 dark:text-slate-400 choice-text"></span>
             </span>
         `;
+
+        ContentRenderer.render(label.querySelector('.choice-text'), choice.text);
 
         // Event Listener
         const input = label.querySelector('input');
@@ -336,7 +338,7 @@ function renderQuestion(q, index) {
     // Explanation (Hidden initially)
     const expContainer = clone.querySelector('.explanation-container');
     expContainer.id = `exp-${q.id}`;
-    expContainer.querySelector('.explanation-text').textContent = q.explanation || "No explanation provided.";
+    ContentRenderer.render(expContainer.querySelector('.explanation-text'), q.explanation || "No explanation provided.");
 
     elements.questionsContainer.appendChild(clone);
 }
@@ -520,15 +522,17 @@ function showResults() {
                     <span class="font-bold text-red-800 dark:text-red-300">Q${q.id}</span>
                     <span class="text-xs text-red-600 dark:text-red-400 uppercase font-semibold">Incorrect</span>
                 </div>
-                <p class="text-slate-800 dark:text-slate-200 mb-3">${q.text}</p>
+                <div class="text-slate-800 dark:text-slate-200 mb-3 result-q-text"></div>
                 <div class="text-sm space-y-1 mb-3">
                     <div class="flex gap-2"><span class="font-semibold text-red-700 dark:text-red-400 w-24">You Selected:</span> <span class="dark:text-slate-300">${(q.userSelectedKeys || []).join(', ')}</span></div>
                     <div class="flex gap-2"><span class="font-semibold text-green-700 dark:text-green-400 w-24">Correct:</span> <span class="dark:text-slate-300">${q.correctKeys.join(', ')}</span></div>
                 </div>
                 <div class="text-sm text-slate-600 dark:text-slate-300 bg-white dark:bg-slate-800 p-3 rounded border border-red-100 dark:border-red-900/50">
-                    <span class="font-semibold text-slate-700 dark:text-slate-200">Explanation:</span> ${q.explanation}
+                    <span class="font-semibold text-slate-700 dark:text-slate-200">Explanation:</span> <div class="inline result-q-exp"></div>
                 </div>
             `;
+            ContentRenderer.render(div.querySelector('.result-q-text'), q.text);
+            ContentRenderer.render(div.querySelector('.result-q-exp'), q.explanation);
             elements.wrongAnswersList.appendChild(div);
         });
     }

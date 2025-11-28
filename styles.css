@@ -185,3 +185,106 @@
 .no-select {
     user-select: none;
 }
+
+/* Markdown Content Styles */
+.question-text code,
+.explanation-text code,
+.choice-text code,
+.result-q-text code,
+.result-q-exp code {
+    background-color: #f1f5f9;
+    padding: 0.2em 0.4em;
+    border-radius: 4px;
+    font-family: monospace;
+    font-size: 0.9em;
+    color: #0f172a;
+}
+
+.dark .question-text code,
+.dark .explanation-text code,
+.dark .choice-text code,
+.dark .result-q-text code,
+.dark .result-q-exp code {
+    background-color: #334155;
+    color: #e2e8f0;
+}
+
+.question-text pre,
+.explanation-text pre,
+.result-q-text pre,
+.result-q-exp pre {
+    background-color: #f8fafc;
+    padding: 1em;
+    border-radius: 8px;
+    overflow-x: auto;
+    margin: 0.5em 0;
+    border: 1px solid #e2e8f0;
+}
+
+.dark .question-text pre,
+.dark .explanation-text pre,
+.dark .result-q-text pre,
+.dark .result-q-exp pre {
+    background-color: #1e293b;
+    border-color: #334155;
+}
+
+.question-text pre code,
+.explanation-text pre code,
+.result-q-text pre code,
+.result-q-exp pre code {
+    background-color: transparent;
+    padding: 0;
+    color: inherit;
+}
+
+.question-text blockquote,
+.explanation-text blockquote,
+.result-q-text blockquote,
+.result-q-exp blockquote {
+    border-left: 4px solid #cbd5e1;
+    padding-left: 1em;
+    color: #64748b;
+    margin: 0.5em 0;
+    font-style: italic;
+}
+
+.dark .question-text blockquote,
+.dark .explanation-text blockquote,
+.dark .result-q-text blockquote,
+.dark .result-q-exp blockquote {
+    border-color: #475569;
+    color: #94a3b8;
+}
+
+.question-text ul,
+.explanation-text ul,
+.result-q-text ul,
+.result-q-exp ul {
+    list-style-type: disc;
+    padding-left: 1.5em;
+    margin: 0.5em 0;
+}
+
+.question-text ol,
+.explanation-text ol,
+.result-q-text ol,
+.result-q-exp ol {
+    list-style-type: decimal;
+    padding-left: 1.5em;
+    margin: 0.5em 0;
+}
+
+.question-text p,
+.explanation-text p,
+.result-q-text p,
+.result-q-exp p {
+    margin-bottom: 0.5em;
+}
+
+.question-text p:last-child,
+.explanation-text p:last-child,
+.result-q-text p:last-child,
+.result-q-exp p:last-child {
+    margin-bottom: 0;
+}

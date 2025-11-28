@@ -1,0 +1,139 @@
+/**
+ * Content Renderer Module
+ * Handles Markdown parsing, HTML sanitization, and LaTeX rendering.
+ * Designed to be loaded via <script> tag for local file compatibility.
+ */
+
+const ContentRenderer = {
+    /**
+     * Heuristically converts (...) and [...] to LaTeX delimiters if they contain math symbols.
+     */
+    preprocessMath: function (text) {
+        if (!text) return text;
+
+        let result = '';
+        let stack = []; // Stores { char: '(', index: 0 }
+        let lastIndex = 0;
+
+        const mathSymbols = /[=\\_\^><]/; // Heuristic: contains =, \, _, ^, >, <
+
+        for (let i = 0; i < text.length; i++) {
+            const char = text[i];
+
+            if (char === '(' || char === '[') {
+                if (stack.length === 0) {
+                    // Start of a top-level group
+                    result += text.substring(lastIndex, i);
+                    lastIndex = i;
+                }
+                stack.push({ char, index: i });
+            } else if (char === ')' || char === ']') {
+                if (stack.length > 0) {
+                    const last = stack[stack.length - 1];
+                    if ((last.char === '(' && char === ')') || (last.char === '[' && char === ']')) {
+                        stack.pop();
+
+                        if (stack.length === 0) {
+                            // End of a top-level group
+                            const content = text.substring(last.index + 1, i);
+                            // Check if it looks like math
+                            if (mathSymbols.test(content)) {
+                                // Convert to LaTeX delimiter
+                                const open = last.char === '(' ? '\\(' : '\\[';
+                                const close = char === ')' ? '\\)' : '\\]';
+                                result += open + content + close;
+                            } else {
+                                // Keep as is
+                                result += text.substring(last.index, i + 1);
+                            }
+                            lastIndex = i + 1;
+                        }
+                    } else {
+                        // Mismatched, ignore or handle? 
+                        // For simplicity, if we find mismatch, we might just reset or ignore.
+                        // But let's just continue and hope it balances later or is just text.
+                    }
+                }
+            }
+        }
+
+        result += text.substring(lastIndex);
+        return result;
+    },
+
+    /**
+     * Renders Markdown and LaTeX content into a target element.
+     * @param {HTMLElement} element - The target DOM element.
+     * @param {string} text - The raw text content (Markdown + LaTeX).
+     */
+    render: function (element, text) {
+        if (!element) return;
+        if (!text) {
+            element.textContent = '';
+            return;
+        }
+
+        try {
+            // 0. Preprocess for implicit math (...) and [...]
+            const preprocessedText = this.preprocessMath(text);
+
+            // Protect LaTeX delimiters using placeholders
+            // This avoids issues with marked consuming backslashes
+            const placeholders = {
+                '\\(': '@@LATEX_INLINE_OPEN@@',
+                '\\)': '@@LATEX_INLINE_CLOSE@@',
+                '\\[': '@@LATEX_DISPLAY_OPEN@@',
+                '\\]': '@@LATEX_DISPLAY_CLOSE@@'
+            };
+
+            let protectedText = preprocessedText;
+            // Replace delimiters with placeholders
+            // We use split/join for simple global replacement without regex escape issues
+            protectedText = protectedText.split('\\(').join(placeholders['\\(']);
+            protectedText = protectedText.split('\\)').join(placeholders['\\)']);
+            protectedText = protectedText.split('\\[').join(placeholders['\\[']);
+            protectedText = protectedText.split('\\]').join(placeholders['\\]']);
+
+            // 1. Parse Markdown to HTML
+            // Enable line breaks for newlines
+            let rawHtml = marked.parse(protectedText, { breaks: true });
+
+            // Remove wrapping <p> tags if marked added them to a single line
+            // This prevents nested <p> tags when we inject into an element that might already be a <p> or similar
+            if (rawHtml.startsWith('<p>') && rawHtml.endsWith('</p>\n')) {
+                rawHtml = rawHtml.substring(3, rawHtml.length - 5);
+            }
+
+            // 2. Restore delimiters
+            rawHtml = rawHtml.split(placeholders['\\(']).join('\\(');
+            rawHtml = rawHtml.split(placeholders['\\)']).join('\\)');
+            rawHtml = rawHtml.split(placeholders['\\[']).join('\\[');
+            rawHtml = rawHtml.split(placeholders['\\]']).join('\\]');
+
+            // 3. Sanitize HTML
+            // 'DOMPurify' is provided by the global library
+            const cleanHtml = DOMPurify.sanitize(rawHtml);
+
+            // 4. Inject HTML
+            element.innerHTML = cleanHtml;
+
+            // 5. Render LaTeX
+            // 'renderMathInElement' is provided by the KaTeX auto-render extension
+            if (window.renderMathInElement) {
+                renderMathInElement(element, {
+                    delimiters: [
+                        { left: '$$', right: '$$', display: true },
+                        { left: '$', right: '$', display: false },
+                        { left: '\\(', right: '\\)', display: false },
+                        { left: '\\[', right: '\\]', display: true }
+                    ],
+                    throwOnError: false
+                });
+            }
+        } catch (error) {
+            console.error("Error rendering content:", error);
+            // Fallback to safe text rendering
+            element.textContent = text;
+        }
+    }
+};
