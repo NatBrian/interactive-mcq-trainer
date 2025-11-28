@@ -16,6 +16,26 @@ A minimal, elegant single-page web application for practicing multiple-choice qu
 -   **Review & Export**: View a detailed summary of incorrect answers and export results to JSON.
 -   **Gemini AI Generation**: Generate custom MCQs from your own study materials (PDF/TXT/MD) using Google's Gemini Pro models.
 
+
+## Feature Comparison vs NotebookLM
+
+| **Feature**                              | **This MCQ Trainer**                                                    | **NotebookLM**                                |
+| ---------------------------------------- | ----------------------------------------------------------------------- | --------------------------------------------- |
+| **Multiple-Answer Questions**            | ✔️ Supports full multi-select logic with progressive reveal              | ❌ Only single-answer MCQs                     |
+| **Number of Questions Generated**        | ✔️ Unlimited, fully customizable                                         | ❌ Limited, small standardized sets            |
+| **Question Specificity / Precision**     | ✔️ Highly specific, controlled by your input or strict generation config | ❌ Generic, broad questions, less controllable |
+| **Difficulty Levels (3 tiers)**          | ✔️ Yes                                                                   | ✔️ Yes                                         |
+| **AI Model**                             | ✔️ Gemini, fully in your control                                         | ✔️ Gemini via Google’s interface               |
+| **Use Your Own Question + Answer Files** | ✔️ Fully supported and local                                             | ❌ Not supported, AI-only                      |
+| **Privacy (Local Mode)**                 | ✔️ 100% local if using your own QA files                                 | ❌ Cloud-based, uploads required               |
+| **Interactive Quiz Engine**              | ✔️ Progressive reveal, instant feedback, multi-choice logic              | ❌ Basic answer checking only                  |
+| **Live Scoring**                         | ✔️ Correct/incorrect/percentage                                          | ❌ Not supported                               |
+| **Review Incorrect Answers**             | ✔️ Full summary view                                                     | ❌ No dedicated review flow                    |
+| **Export to JSON**                       | ✔️ Yes                                                                   | ❌ No                                          |
+| **Offline Usage**                        | ✔️ Fully offline                                                         | ❌ Requires internet                           |
+| **Customization / Control**              | ✔️ Total control over format, parsing, evaluation                        | ❌ Mostly fixed format                         |
+
+
 ## Setup & Usage
 
 1.  **Open the App**: Double-click `index.html` to open it in your web browser.
