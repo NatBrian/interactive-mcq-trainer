@@ -288,3 +288,17 @@
 .result-q-exp p:last-child {
     margin-bottom: 0;
 }
+
+/* Info Icon Tooltip */
+.info-icon-wrapper:hover .info-tooltip {
+    display: block;
+}
+
+.info-tooltip {
+    pointer-events: none;
+    animation: fadeIn 0.2s ease-out;
+}
+
+.info-tooltip code {
+    font-family: 'Courier New', monospace;
+}

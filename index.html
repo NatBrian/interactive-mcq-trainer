@@ -291,6 +291,36 @@
             <div class="grid md:grid-cols-2 gap-6 max-w-2xl mx-auto">
                 <!-- Questions Input -->
                 <div class="relative group">
+                    <div class="flex items-center justify-center gap-1 mb-2">
+                        <span class="text-sm font-semibold text-slate-700 dark:text-slate-300">Questions File(s)</span>
+                        <div class="info-icon-wrapper relative inline-block">
+                            <svg xmlns="http://www.w3.org/2000/svg"
+                                class="h-4 w-4 text-slate-400 dark:text-slate-500 cursor-help" fill="none"
+                                viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            <div
+                                class="info-tooltip hidden absolute left-1/2 -translate-x-1/2 bottom-full mb-2 w-96 bg-slate-800 dark:bg-slate-700 text-white text-xs rounded-lg p-3 shadow-xl z-50 text-left">
+                                <div class="font-semibold mb-2 text-slate-100">Expected Format:</div>
+                                <code
+                                    class="block bg-slate-900 dark:bg-slate-800 p-2 rounded text-green-300 text-[10px] leading-relaxed whitespace-pre">Q1 [Single]: Question text here?
+A. Option A
+B. Option B
+
+Q2 [Multiple] (Select all): Question?
+A. Option A
+B. Option B</code>
+                                <div class="text-slate-300 mt-2 text-[10px]">
+                                    <strong>Type:</strong> [Single] or [Multiple]<br>
+                                    <strong>Note:</strong> Type tag is optional (inferred from answer key)
+                                </div>
+                                <div
+                                    class="absolute left-1/2 -translate-x-1/2 top-full w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-slate-800 dark:border-t-slate-700">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     <label for="questions-file"
                         class="block w-full cursor-pointer bg-slate-50 dark:bg-slate-700 border-2 border-dashed border-slate-300 dark:border-slate-600 rounded-lg p-6 hover:border-brand-500 dark:hover:border-brand-500 hover:bg-brand-50 dark:hover:bg-slate-600 transition-all text-center">
                         <div class="mb-2 text-slate-400 group-hover:text-brand-500">
@@ -310,6 +340,33 @@
 
                 <!-- Answers Input -->
                 <div class="relative group">
+                    <div class="flex items-center justify-center gap-1 mb-2">
+                        <span class="text-sm font-semibold text-slate-700 dark:text-slate-300">Answers File</span>
+                        <div class="info-icon-wrapper relative inline-block">
+                            <svg xmlns="http://www.w3.org/2000/svg"
+                                class="h-4 w-4 text-slate-400 dark:text-slate-500 cursor-help" fill="none"
+                                viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            <div
+                                class="info-tooltip hidden absolute left-1/2 -translate-x-1/2 bottom-full mb-2 w-96 bg-slate-800 dark:bg-slate-700 text-white text-xs rounded-lg p-3 shadow-xl z-50 text-left">
+                                <div class="font-semibold mb-2 text-slate-100">Expected Format:</div>
+                                <code
+                                    class="block bg-slate-900 dark:bg-slate-800 p-2 rounded text-green-300 text-[10px] leading-relaxed whitespace-pre">1. Correct: B
+   Explanation: Reason here.
+
+2. Correct: B, C, D
+   Explanation: Multiple answers.</code>
+                                <div class="text-slate-300 mt-2 text-[10px]">
+                                    <strong>Note:</strong> Use comma-separated letters for multiple correct answers
+                                </div>
+                                <div
+                                    class="absolute left-1/2 -translate-x-1/2 top-full w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-slate-800 dark:border-t-slate-700">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     <label for="answers-file"
                         class="block w-full cursor-pointer bg-slate-50 dark:bg-slate-700 border-2 border-dashed border-slate-300 dark:border-slate-600 rounded-lg p-6 hover:border-brand-500 dark:hover:border-brand-500 hover:bg-brand-50 dark:hover:bg-slate-600 transition-all text-center">
                         <div class="mb-2 text-slate-400 group-hover:text-brand-500">
