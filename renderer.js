@@ -20,6 +20,12 @@ const ContentRenderer = {
         for (let i = 0; i < text.length; i++) {
             const char = text[i];
 
+            // Skip if escaped (preceded by backslash)
+            // This prevents breaking explicit LaTeX like \( ... \) or \[ ... \]
+            if (i > 0 && (text[i - 1] === '\\')) {
+                continue;
+            }
+
             if (char === '(' || char === '[') {
                 if (stack.length === 0) {
                     // Start of a top-level group
