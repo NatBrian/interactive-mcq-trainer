@@ -102,6 +102,9 @@ function showLoading(message = 'Processing your source material') {
     geminiElements.loadingMessage.textContent = message;
     geminiElements.loadingDiv.classList.remove('hidden');
     geminiElements.generateBtn.disabled = true;
+    if (typeof GeminiDownloadManager !== 'undefined') {
+        GeminiDownloadManager.hideButtons();
+    }
 }
 
 // Hide loading state
@@ -476,13 +479,91 @@ async function processGeneratedText(text) {
     state.questions = parsedQuestions;
     state.answersMap = parsedAnswers;
 
+    // Update Download Manager
+    GeminiDownloadManager.setContent(questionsPart, answersPart);
+    GeminiDownloadManager.showButtons();
+
     // Render
     processAndRender();
 }
 
+// Gemini Download Manager
+const GeminiDownloadManager = {
+    elements: {
+        container: null,
+        btnQuestions: null,
+        btnAnswers: null
+    },
+    data: {
+        questions: '',
+        answers: ''
+    },
+
+    init() {
+        this.elements.container = document.getElementById('gemini-downloads');
+        this.elements.btnQuestions = document.getElementById('download-questions-btn');
+        this.elements.btnAnswers = document.getElementById('download-answers-btn');
+
+        if (this.elements.btnQuestions) {
+            this.elements.btnQuestions.addEventListener('click', () => this.downloadQuestions());
+        }
+        if (this.elements.btnAnswers) {
+            this.elements.btnAnswers.addEventListener('click', () => this.downloadAnswers());
+        }
+    },
+
+    setContent(questions, answers) {
+        this.data.questions = questions;
+        this.data.answers = answers;
+    },
+
+    showButtons() {
+        if (this.elements.container) {
+            this.elements.container.classList.remove('hidden');
+        }
+    },
+
+    hideButtons() {
+        if (this.elements.container) {
+            this.elements.container.classList.add('hidden');
+        }
+    },
+
+    downloadQuestions() {
+        if (!this.data.questions) return;
+        this.downloadFile('generated-questions.txt', this.data.questions);
+    },
+
+    downloadAnswers() {
+        if (!this.data.answers) return;
+        this.downloadFile('generated-answers.txt', this.data.answers);
+    },
+
+    downloadFile(filename, content) {
+        try {
+            const blob = new Blob([content], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        } catch (error) {
+            console.error('Download failed:', error);
+            showGeminiError('Failed to download file.');
+        }
+    }
+};
+
 // Initialize on DOM load
 if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initGemini);
+    document.addEventListener('DOMContentLoaded', () => {
+        initGemini();
+        GeminiDownloadManager.init();
+    });
 } else {
     initGemini();
+    GeminiDownloadManager.init();
 }
