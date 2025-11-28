@@ -11,25 +11,36 @@ const ContentRenderer = {
     preprocessMath: function (text) {
         if (!text) return text;
 
+        // 1. Mask code blocks to prevent accidental LaTeX conversion
+        // Matches fenced code blocks (```...```) and inline code (`...`)
+        // We use a regex that captures the backticks to handle variable length (`, ``, ```, etc.)
+        const codeBlocks = [];
+        const maskRegex = /(`{1,})[\s\S]*?\1/g;
+
+        const maskedText = text.replace(maskRegex, (match) => {
+            codeBlocks.push(match);
+            return `@@CODE_BLOCK_${codeBlocks.length - 1}@@`;
+        });
+
         let result = '';
         let stack = []; // Stores { char: '(', index: 0 }
         let lastIndex = 0;
 
         const mathSymbols = /[=\\_\^><]/; // Heuristic: contains =, \, _, ^, >, <
 
-        for (let i = 0; i < text.length; i++) {
-            const char = text[i];
+        for (let i = 0; i < maskedText.length; i++) {
+            const char = maskedText[i];
 
             // Skip if escaped (preceded by backslash)
             // This prevents breaking explicit LaTeX like \( ... \) or \[ ... \]
-            if (i > 0 && (text[i - 1] === '\\')) {
+            if (i > 0 && (maskedText[i - 1] === '\\')) {
                 continue;
             }
 
             if (char === '(' || char === '[') {
                 if (stack.length === 0) {
                     // Start of a top-level group
-                    result += text.substring(lastIndex, i);
+                    result += maskedText.substring(lastIndex, i);
                     lastIndex = i;
                 }
                 stack.push({ char, index: i });
@@ -41,7 +52,7 @@ const ContentRenderer = {
 
                         if (stack.length === 0) {
                             // End of a top-level group
-                            const content = text.substring(last.index + 1, i);
+                            const content = maskedText.substring(last.index + 1, i);
 
                             // Check if it looks like math AND doesn't already have LaTeX delimiters
                             // Matches \(, \[, $$, \begin, or \\(, \\[ (escaped versions)
@@ -54,7 +65,7 @@ const ContentRenderer = {
                                 result += open + content + close;
                             } else {
                                 // Keep as is
-                                result += text.substring(last.index, i + 1);
+                                result += maskedText.substring(last.index, i + 1);
                             }
                             lastIndex = i + 1;
                         }
@@ -67,7 +78,14 @@ const ContentRenderer = {
             }
         }
 
-        result += text.substring(lastIndex);
+        result += maskedText.substring(lastIndex);
+
+        // 2. Restore code blocks
+        codeBlocks.forEach((block, index) => {
+            // Use split/join to replace all instances (safe for special chars in block)
+            result = result.split(`@@CODE_BLOCK_${index}@@`).join(block);
+        });
+
         return result;
     },
 

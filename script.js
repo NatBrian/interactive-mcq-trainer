@@ -161,11 +161,12 @@ function parseQuestionsText(text) {
     const choiceRegex = /^\s*([A-Z])[\.\)]\s*(.*)/;
 
     for (let i = 0; i < lines.length; i++) {
-        let line = lines[i].trim();
-        if (!line) continue;
+        const rawLine = lines[i];
+        const trimmedLine = rawLine.trim();
+        if (!trimmedLine) continue;
 
         // Check for new Question start
-        const qMatch = line.match(qStartRegex);
+        const qMatch = trimmedLine.match(qStartRegex);
         if (qMatch) {
             // Save previous question
             if (currentQ) questions.push(currentQ);
@@ -183,7 +184,7 @@ function parseQuestionsText(text) {
         }
 
         // Check for Choice
-        const cMatch = line.match(choiceRegex);
+        const cMatch = trimmedLine.match(choiceRegex);
         if (cMatch && currentQ) {
             currentQ.choices.push({
                 key: cMatch[1].toUpperCase(),
@@ -196,10 +197,10 @@ function parseQuestionsText(text) {
         if (currentQ) {
             if (currentQ.choices.length > 0) {
                 // Multiline choice
-                currentQ.choices[currentQ.choices.length - 1].text += '\n' + line;
+                currentQ.choices[currentQ.choices.length - 1].text += '\n' + rawLine.trimEnd();
             } else {
                 // Multiline question text
-                currentQ.text += (currentQ.text ? '\n' : '') + line;
+                currentQ.text += (currentQ.text ? '\n' : '') + rawLine.trimEnd();
             }
         }
     }
@@ -218,10 +219,11 @@ function parseAnswersText(text) {
     const expStartRegex = /^\s*Explanation:\s*(.*)/i;
 
     for (let i = 0; i < lines.length; i++) {
-        let line = lines[i].trim();
-        if (!line) continue;
+        const rawLine = lines[i];
+        const trimmedLine = rawLine.trim();
+        if (!trimmedLine) continue;
 
-        const aMatch = line.match(aStartRegex);
+        const aMatch = trimmedLine.match(aStartRegex);
         if (aMatch) {
             if (currentA) answers.set(currentA.id, currentA);
 
@@ -234,7 +236,7 @@ function parseAnswersText(text) {
             continue;
         }
 
-        const expMatch = line.match(expStartRegex);
+        const expMatch = trimmedLine.match(expStartRegex);
         if (expMatch && currentA) {
             currentA.explanation = expMatch[1];
             continue;
@@ -242,7 +244,7 @@ function parseAnswersText(text) {
 
         // Append multiline explanation
         if (currentA) {
-            currentA.explanation += (currentA.explanation ? '\n' : '') + line;
+            currentA.explanation += (currentA.explanation ? '\n' : '') + rawLine.trimEnd();
         }
     }
     if (currentA) answers.set(currentA.id, currentA);

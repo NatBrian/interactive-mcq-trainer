@@ -318,12 +318,12 @@ Explanation: <defend each correct choice and briefly state why each incorrect ch
 - **Math:** Use LaTeX syntax.
   - Inline math: \`\\( ... \\)\` (e.g., \`\\( E = mc^2 \\)\`)
   - Display math: \`\\[ ... \\]\` (e.g., \`\\[ \\sum_{i=1}^n x_i \\]\`)
-- **Code:** Use Markdown code blocks with language specification.
-  - Example:
+- **Code:** Use Markdown code blocks with language specification. **Do NOT ESCAPE FOR SPECIAL CHAR within CODE SYNTAX, Do not use backslash to escape special characters**
+  - Example block code:
     \`\`\`python
     print("Hello")
     \`\`\`
-
+  - Example inline code: \`print("Hello")\`
 ---
 
 **CRITICAL:** Ensure the output format matches exactly:
