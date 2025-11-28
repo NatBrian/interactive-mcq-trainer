@@ -89,3 +89,26 @@ Answer Key and Explanations
 -   **Questions**: Must start with `Q<number>` or just `<number>`. Optional `[Single]` or `[Multiple]` tags help but are not strictly required (inferred from answer key).
 -   **Choices**: Must start with a letter followed by a dot or parenthesis (e.g., `A.`, `B)`).
 -   **Answers**: Must match the ID of the question. Format: `<ID>. Correct: <Keys>`.
+
+## Supported Formats for Math and Code
+
+You can include mathematical equations and code snippets in your questions, choices, and explanations.
+
+### Math (LaTeX)
+-   **Inline Math**: Use `\( ... \)`
+    -   Example: `The energy is given by \( E = mc^2 \).`
+-   **Display Math**: Use `\[ ... \]`
+    -   Example: `\[ \sum_{i=1}^n x_i \]`
+-   **Implicit Math**: Parentheses `(...)` or brackets `[...]` containing math symbols (`=`, `\`, `_`, `^`, `>`, `<`) are automatically detected as math.
+    -   Example: `(f(x) = x^2)` renders as math.
+
+### Code (Markdown)
+-   Use standard Markdown code blocks.
+-   Example:
+    ```text
+    ```python
+    def hello():
+        print("Hello World")
+    ```
+    ```
+

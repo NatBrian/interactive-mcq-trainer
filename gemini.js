@@ -314,6 +314,16 @@ Explanation: <defend each correct choice and briefly state why each incorrect ch
 - Explanations should be concise (2-5 sentences), rigorous, and directly grounded in the material
 - Include **nothing** outside the two required parts
 
+### **Formatting for Math and Code**
+- **Math:** Use LaTeX syntax.
+  - Inline math: \`\\\\( ... \\\\)\` (e.g., \`\\\\( E = mc^2 \\\\)\`)
+  - Display math: \`\\\\[ ... \\\\]\` (e.g., \`\\\\[ \\\\sum_{i=1}^n x_i \\\\]\`)
+- **Code:** Use Markdown code blocks with language specification.
+  - Example:
+    \`\`\`python
+    print("Hello")
+    \`\`\`
+
 ---
 
 **CRITICAL:** Ensure the output format matches exactly:
