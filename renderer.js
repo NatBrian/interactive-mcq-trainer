@@ -42,8 +42,12 @@ const ContentRenderer = {
                         if (stack.length === 0) {
                             // End of a top-level group
                             const content = text.substring(last.index + 1, i);
-                            // Check if it looks like math
-                            if (mathSymbols.test(content)) {
+
+                            // Check if it looks like math AND doesn't already have LaTeX delimiters
+                            // Matches \(, \[, $$, \begin, or \\(, \\[ (escaped versions)
+                            const isExplicitLatex = /^\s*((\\{1,2})(\[|\(|begin)|\$\$)/.test(content);
+
+                            if (mathSymbols.test(content) && !isExplicitLatex) {
                                 // Convert to LaTeX delimiter
                                 const open = last.char === '(' ? '\\(' : '\\[';
                                 const close = char === ')' ? '\\)' : '\\]';
